@@ -1710,60 +1710,142 @@
 
   <!-- Listen to article (Web Speech API) -->
   <script>
-    let speechUtterance = null;
-    let isSpeaking = false;
+    const PLAY_ICON = '<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />';
+    const STOP_ICON = '<path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />';
 
-    function getArticleText() {
-      const sections = document.querySelectorAll('.pull-quote p, .key-findings .findings-list li, section .section-intro p, section h2, .commentary p');
-      let text = 'The State of AI in Mid-Market Investment Management, Q1 2026. A report by Convolving.\n\n';
-      sections.forEach(el => {
-        const t = el.textContent.trim();
-        if (t) text += t + '\n\n';
-      });
-      return text;
+    let speechChunks = [];
+    let currentChunk = 0;
+    let isSpeaking = false;
+    let keepAliveTimer = null;
+    let selectedVoice = null;
+
+    // Preload voices (Android Chrome loads them async)
+    function loadVoices() {
+      const voices = speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        selectedVoice = voices.find(v =>
+          v.lang.startsWith('en') && (
+            v.name.includes('Samantha') ||
+            v.name.includes('Daniel') ||
+            v.name.includes('Google UK English') ||
+            v.name.includes('English United Kingdom') ||
+            v.name.includes('English')
+          )
+        ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+      }
+    }
+    loadVoices();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = loadVoices;
     }
 
-    function toggleListen() {
-      const btn = document.getElementById('listenBtn');
-      const icon = document.getElementById('listenIcon');
-      const label = document.getElementById('listenText');
+    function getArticleChunks() {
+      const sections = document.querySelectorAll(
+        '.pull-quote p, .key-findings .findings-list li, section .section-intro p, section h2, .commentary p'
+      );
+      const chunks = ['The State of AI in Mid-Market Investment Management. Q1 2026. A report by Convolving.'];
+      sections.forEach(el => {
+        const text = el.textContent.trim();
+        if (!text) return;
+        // Split long paragraphs into sentences to avoid mobile Chrome's ~200 char limit
+        const sentences = text.match(/[^.!?]+[.!?]+[\s]*/g) || [text];
+        let current = '';
+        sentences.forEach(s => {
+          if ((current + s).length > 180) {
+            if (current) chunks.push(current.trim());
+            current = s;
+          } else {
+            current += s;
+          }
+        });
+        if (current.trim()) chunks.push(current.trim());
+      });
+      return chunks;
+    }
 
-      if (isSpeaking) {
-        speechSynthesis.cancel();
-        isSpeaking = false;
-        btn.classList.remove('playing');
-        label.textContent = 'Listen to article';
-        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />';
+    function speakNextChunk() {
+      if (currentChunk >= speechChunks.length || !isSpeaking) {
+        stopSpeaking();
         return;
       }
 
-      const text = getArticleText();
-      speechUtterance = new SpeechSynthesisUtterance(text);
-      speechUtterance.rate = 1;
-      speechUtterance.pitch = 1;
+      const utterance = new SpeechSynthesisUtterance(speechChunks[currentChunk]);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      if (selectedVoice) utterance.voice = selectedVoice;
 
-      // Try to pick a good English voice
-      const voices = speechSynthesis.getVoices();
-      const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Google UK English'));
-      if (preferred) speechUtterance.voice = preferred;
-
-      speechUtterance.onend = () => {
-        isSpeaking = false;
-        btn.classList.remove('playing');
-        label.textContent = 'Listen to article';
-        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />';
+      utterance.onend = () => {
+        currentChunk++;
+        if (isSpeaking) speakNextChunk();
       };
 
-      speechSynthesis.speak(speechUtterance);
-      isSpeaking = true;
-      btn.classList.add('playing');
-      label.textContent = 'Stop listening';
-      icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />';
+      utterance.onerror = (e) => {
+        // On error, try next chunk
+        if (e.error !== 'canceled') {
+          currentChunk++;
+          if (isSpeaking) speakNextChunk();
+        }
+      };
+
+      speechSynthesis.speak(utterance);
     }
 
-    // Preload voices
-    speechSynthesis.getVoices();
-    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    // Chrome Android pauses speech after ~15s. This keep-alive prevents that.
+    function startKeepAlive() {
+      stopKeepAlive();
+      keepAliveTimer = setInterval(() => {
+        if (speechSynthesis.speaking && !speechSynthesis.paused) {
+          speechSynthesis.pause();
+          speechSynthesis.resume();
+        }
+      }, 10000);
+    }
+
+    function stopKeepAlive() {
+      if (keepAliveTimer) {
+        clearInterval(keepAliveTimer);
+        keepAliveTimer = null;
+      }
+    }
+
+    function setButtonState(playing) {
+      const btn = document.getElementById('listenBtn');
+      const icon = document.getElementById('listenIcon');
+      const label = document.getElementById('listenText');
+      if (playing) {
+        btn.classList.add('playing');
+        label.textContent = 'Stop listening';
+        icon.innerHTML = STOP_ICON;
+      } else {
+        btn.classList.remove('playing');
+        label.textContent = 'Listen to article';
+        icon.innerHTML = PLAY_ICON;
+      }
+    }
+
+    function stopSpeaking() {
+      speechSynthesis.cancel();
+      isSpeaking = false;
+      stopKeepAlive();
+      setButtonState(false);
+    }
+
+    function toggleListen() {
+      if (isSpeaking) {
+        stopSpeaking();
+        return;
+      }
+
+      // Make sure voices are loaded
+      loadVoices();
+
+      speechChunks = getArticleChunks();
+      currentChunk = 0;
+      isSpeaking = true;
+      setButtonState(true);
+      startKeepAlive();
+      speakNextChunk();
+    }
   </script>
 
 </body>
