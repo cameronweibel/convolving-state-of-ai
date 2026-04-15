@@ -568,43 +568,141 @@
       flex-shrink: 0;
     }
 
-    .download-btn.generating {
-      pointer-events: none;
-      opacity: 0.7;
+    /* ══════════════════════════════════════════════════════ */
+    /* MOBILE RESPONSIVE                                     */
+    /* ══════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .page { padding: 0 20px; }
+
+      section { padding: 48px 0; }
+
+      h1 { font-size: 32px; }
+      h2 { font-size: 26px; margin-bottom: 16px; }
+      h3 { font-size: 20px; }
+
+      .cover { padding: 48px 0; min-height: 80vh; }
+      .cover h1 { font-size: 36px; max-width: 100%; }
+      .cover-logo { margin-bottom: 32px; }
+      .cover-subtitle { font-size: 17px; max-width: 100%; margin-bottom: 32px; }
+      .cover-grid { display: none; }
+
+      .pull-quote { padding: 56px 0; }
+      .pull-quote p { font-size: 24px; }
+
+      .findings-list li { gap: 12px; padding: 16px 0; }
+      .findings-list li::before { font-size: 16px; width: 24px; }
+
+      .section-intro p { font-size: 15px; }
+
+      .exhibit-title { font-size: 17px; }
+
+      .stat-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .stat-card { padding: 24px 16px; }
+      .stat-number { font-size: 36px; }
+
+      .phase-breakdown {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .phase-number { font-size: 32px; }
+
+      .commentary { padding: 24px; margin: 32px 0; }
+      .commentary-avatar { width: 44px; height: 44px; font-size: 14px; }
+
+      .hbar-row {
+        grid-template-columns: 120px 1fr 36px;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .hbar-label { font-size: 11px; }
+      .hbar-track { height: 22px; }
+      .hbar-segment { font-size: 9px; }
+
+      .heatmap-table { font-size: 11px; overflow-x: auto; display: block; }
+      .heatmap-cell { width: 28px; height: 28px; font-size: 9px; }
+      .heatmap-table th:not(:first-child) { height: 90px; font-size: 10px; }
+
+      .chart-legend { gap: 12px; font-size: 11px; }
+      .legend-dot { width: 10px; height: 10px; }
+
+      .download-btn {
+        top: 12px;
+        right: 12px;
+        padding: 8px 14px;
+        font-size: 12px;
+      }
+
+      .download-btn svg { width: 14px; height: 14px; }
+
+      .report-footer { padding: 32px 0; font-size: 12px; }
     }
 
-    /* ── Print / PDF styles ── */
+    @media (max-width: 480px) {
+      .page { padding: 0 16px; }
+
+      .cover h1 { font-size: 28px; }
+      .cover-subtitle { font-size: 15px; }
+
+      .pull-quote p { font-size: 20px; }
+
+      h2 { font-size: 22px; }
+
+      .phase-breakdown { grid-template-columns: repeat(2, 1fr); }
+
+      .hbar-row { grid-template-columns: 100px 1fr 32px; }
+    }
+
+    /* ══════════════════════════════════════════════════════ */
+    /* PRINT / PDF STYLES                                    */
+    /* ══════════════════════════════════════════════════════ */
     @media print {
       .download-btn { display: none !important; }
 
-      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
 
-      body {
-        font-size: 14px;
-        line-height: 1.6;
+      html, body {
+        font-size: 11pt;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
       }
 
       .page {
-        padding: 0 36px;
+        max-width: 100%;
+        padding: 0 48pt;
       }
 
+      /* Cover: full first page */
       .cover {
-        min-height: 100vh;
+        min-height: 0;
+        height: 100vh;
         page-break-after: always;
         background: linear-gradient(135deg, #0e1c30 0%, #1b3d5e 50%, #2d5f8a 100%) !important;
       }
 
-      .cover::before, .cover::after {
-        display: none;
-      }
+      .cover::before, .cover::after { display: none; }
+      .cover-grid { display: none; }
 
+      /* Pull quotes: own page, avoid splitting */
       .pull-quote {
         page-break-inside: avoid;
+        page-break-before: auto;
         background: #f7f8fb !important;
+        padding: 60pt 0;
       }
 
+      /* Sections */
       section {
-        padding: 48px 0;
+        padding: 36pt 0;
         page-break-before: auto;
       }
 
@@ -612,17 +710,28 @@
         border-top: 1px solid #e2e5ea;
       }
 
+      /* Key rule: prevent cutting through these elements */
       .exhibit {
+        page-break-inside: avoid;
+        margin: 24pt 0;
+      }
+
+      .chart-container {
         page-break-inside: avoid;
       }
 
       .commentary {
         page-break-inside: avoid;
         background: #f7f8fb !important;
+        margin: 24pt 0;
       }
 
       .stat-row {
         page-break-inside: avoid;
+      }
+
+      .stat-card {
+        background: #f7f8fb !important;
       }
 
       .phase-breakdown {
@@ -633,25 +742,51 @@
         background: #f7f8fb !important;
       }
 
-      .stat-card {
-        background: #f7f8fb !important;
+      .findings-list li {
+        page-break-inside: avoid;
       }
 
+      .hbar-chart {
+        page-break-inside: avoid;
+      }
+
+      .heatmap-table {
+        page-break-inside: avoid;
+      }
+
+      /* Section headings: avoid orphan headings at bottom of page */
+      h2, h3, .exhibit-label, .exhibit-title {
+        page-break-after: avoid;
+      }
+
+      .section-intro {
+        page-break-after: avoid;
+      }
+
+      /* Footer */
       .report-footer {
         background: #0e1c30 !important;
-        page-break-before: auto;
+        color: rgba(255,255,255,0.6) !important;
+        padding: 24pt 0;
       }
 
-      .heatmap-cell {
-        -webkit-print-color-adjust: exact !important;
+      .report-footer strong {
+        color: white !important;
       }
 
+      /* Ensure canvas charts scale to fit */
+      canvas {
+        max-width: 100% !important;
+        page-break-inside: avoid;
+      }
+
+      /* Stacked bar segments */
       .hbar-segment {
         -webkit-print-color-adjust: exact !important;
       }
 
-      canvas {
-        max-width: 100% !important;
+      .heatmap-cell {
+        -webkit-print-color-adjust: exact !important;
       }
     }
   </style>
