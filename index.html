@@ -141,6 +141,41 @@
       color: rgba(255,255,255,0.5);
     }
 
+    /* ── Listen Button ── */
+    .listen-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 32px;
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.9);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.2s ease;
+    }
+
+    .listen-btn:hover {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .listen-btn.playing {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .listen-btn svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
     /* ── Decorative grid dots on cover ── */
     .cover-grid {
       position: absolute;
@@ -662,7 +697,7 @@
     /* PRINT / PDF STYLES                                    */
     /* ══════════════════════════════════════════════════════ */
     @media print {
-      .download-btn { display: none !important; }
+      .download-btn, .listen-btn { display: none !important; }
 
       *, *::before, *::after {
         -webkit-print-color-adjust: exact !important;
@@ -681,16 +716,26 @@
         padding: 0 48pt;
       }
 
-      /* Cover: full first page */
+      /* Cover: exactly one page */
       .cover {
         min-height: 0;
         height: 100vh;
+        max-height: 100vh;
+        overflow: hidden;
         page-break-after: always;
+        page-break-inside: avoid;
         background: linear-gradient(135deg, #0e1c30 0%, #1b3d5e 50%, #2d5f8a 100%) !important;
+        padding: 60pt 0;
+        justify-content: flex-end;
       }
+
+      .cover h1 { font-size: 32pt; margin-bottom: 12pt; }
+      .cover-logo { margin-bottom: 24pt; }
+      .cover-subtitle { font-size: 14pt; margin-bottom: 24pt; }
 
       .cover::before, .cover::after { display: none; }
       .cover-grid { display: none; }
+      .listen-btn { display: none !important; }
 
       /* Pull quotes: own page, avoid splitting */
       .pull-quote {
@@ -818,6 +863,12 @@
       <h1>The State of AI in Mid-Market Investment Management: Q1 2026</h1>
       <p class="cover-subtitle">Adoption, automation, and the road to enterprise-scale AI across PE, asset management, and family offices.</p>
       <p class="cover-meta">April 2026</p>
+      <button class="listen-btn" onclick="toggleListen()" id="listenBtn">
+        <svg id="listenIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+        </svg>
+        <span id="listenText">Listen to article</span>
+      </button>
     </div>
   </div>
 
@@ -1648,6 +1699,64 @@
     function generatePDF() {
       window.print();
     }
+  </script>
+
+  <!-- Listen to article (Web Speech API) -->
+  <script>
+    let speechUtterance = null;
+    let isSpeaking = false;
+
+    function getArticleText() {
+      const sections = document.querySelectorAll('.pull-quote p, .key-findings .findings-list li, section .section-intro p, section h2, .commentary p');
+      let text = 'The State of AI in Mid-Market Investment Management, Q1 2026. A report by Convolving.\n\n';
+      sections.forEach(el => {
+        const t = el.textContent.trim();
+        if (t) text += t + '\n\n';
+      });
+      return text;
+    }
+
+    function toggleListen() {
+      const btn = document.getElementById('listenBtn');
+      const icon = document.getElementById('listenIcon');
+      const label = document.getElementById('listenText');
+
+      if (isSpeaking) {
+        speechSynthesis.cancel();
+        isSpeaking = false;
+        btn.classList.remove('playing');
+        label.textContent = 'Listen to article';
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />';
+        return;
+      }
+
+      const text = getArticleText();
+      speechUtterance = new SpeechSynthesisUtterance(text);
+      speechUtterance.rate = 1;
+      speechUtterance.pitch = 1;
+
+      // Try to pick a good English voice
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Google UK English'));
+      if (preferred) speechUtterance.voice = preferred;
+
+      speechUtterance.onend = () => {
+        isSpeaking = false;
+        btn.classList.remove('playing');
+        label.textContent = 'Listen to article';
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />';
+      };
+
+      speechSynthesis.speak(speechUtterance);
+      isSpeaking = true;
+      btn.classList.add('playing');
+      label.textContent = 'Stop listening';
+      icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />';
+    }
+
+    // Preload voices
+    speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
   </script>
 
 </body>
