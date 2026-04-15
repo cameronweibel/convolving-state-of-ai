@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>State of AI in Mid-Market Investment Management — Convolving</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-bg: #ffffff;
+      --color-bg-warm: #f7f8fb;
+      --color-bg-accent: #ecf0f6;
+      --color-dark: #0e1c30;
+      --color-text: #1a1a1a;
+      --color-text-muted: #6b7280;
+      --color-border: #e2e5ea;
+      --color-accent: #1b3d5e;
+      --color-accent-light: #2d5f8a;
+      --color-accent-bright: #3578c4;
+      --color-accent-sky: #5a9fd6;
+      --color-highlight: #d4742c;
+      --font-heading: 'DM Serif Display', Georgia, serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--color-text);
+      background: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    section {
+      padding: 80px 0;
+    }
+
+    section + section {
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* ── Typography ── */
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--color-dark);
+    }
+
+    h1 { font-size: 56px; letter-spacing: -0.02em; }
+    h2 { font-size: 36px; letter-spacing: -0.01em; margin-bottom: 24px; }
+    h3 { font-size: 24px; margin-bottom: 16px; }
+
+    p { margin-bottom: 16px; color: #374151; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── Cover Page ── */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      background: linear-gradient(135deg, #0e1c30 0%, #1b3d5e 50%, #2d5f8a 100%);
+      color: white;
+      padding: 80px 0;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: -10%;
+      left: -5%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(212, 116, 44, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .cover .page {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-logo {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 64px;
+    }
+
+    .cover h1 {
+      font-size: 64px;
+      color: white;
+      margin-bottom: 24px;
+      max-width: 700px;
+    }
+
+    .cover-subtitle {
+      font-size: 22px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 300;
+      margin-bottom: 48px;
+      max-width: 550px;
+    }
+
+    .cover-meta {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ── Decorative grid dots on cover ── */
+    .cover-grid {
+      position: absolute;
+      top: 60px;
+      right: 60px;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 18px;
+      opacity: 0.15;
+      z-index: 0;
+    }
+    .cover-grid span {
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      display: block;
+    }
+
+    /* ── Pull Quote ── */
+    .pull-quote {
+      background: var(--color-bg-warm);
+      padding: 100px 0;
+      border-top: none;
+    }
+
+    .pull-quote p {
+      font-family: var(--font-heading);
+      font-size: 36px;
+      line-height: 1.35;
+      color: var(--color-accent);
+      max-width: 750px;
+    }
+
+    /* ── Key Findings ── */
+    .key-findings {
+      background: var(--color-bg);
+    }
+
+    .findings-list {
+      list-style: none;
+      counter-reset: findings;
+    }
+
+    .findings-list li {
+      counter-increment: findings;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      gap: 20px;
+      align-items: baseline;
+    }
+
+    .findings-list li:last-child {
+      border-bottom: none;
+    }
+
+    .findings-list li::before {
+      content: counter(findings) ".";
+      font-family: var(--font-heading);
+      font-size: 20px;
+      color: var(--color-accent);
+      flex-shrink: 0;
+      width: 28px;
+    }
+
+    .finding-title {
+      font-weight: 700;
+      color: var(--color-dark);
+    }
+
+    /* ── Exhibit ── */
+    .exhibit {
+      margin: 48px 0;
+      background: var(--color-bg);
+    }
+
+    .exhibit-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+
+    .exhibit-title {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      color: var(--color-dark);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .exhibit-desc {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-bottom: 32px;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .chart-container canvas {
+      width: 100% !important;
+    }
+
+    .exhibit-source {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .exhibit-attribution {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Stat Cards ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin: 48px 0;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 32px 20px;
+      background: var(--color-bg-warm);
+      border-radius: 12px;
+    }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 48px;
+      color: var(--color-accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    /* ── Commentary Box ── */
+    .commentary {
+      background: var(--color-bg-warm);
+      border-radius: 12px;
+      padding: 40px;
+      margin: 48px 0;
+      border-left: 4px solid var(--color-accent);
+    }
+
+    .commentary-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .commentary-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .commentary-name {
+      font-weight: 700;
+      color: var(--color-dark);
+    }
+
+    .commentary-role {
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .commentary p {
+      font-size: 15px;
+      color: #4b5563;
+      font-style: italic;
+    }
+
+    /* ── Heatmap Table ── */
+    .heatmap-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 24px 0;
+    }
+
+    .heatmap-table th {
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 2px solid var(--color-dark);
+      font-size: 12px;
+    }
+
+    .heatmap-table th:not(:first-child) {
+      text-align: center;
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
+      padding: 8px 6px;
+      white-space: nowrap;
+      font-size: 11px;
+      height: 120px;
+    }
+
+    .heatmap-table td {
+      padding: 8px;
+      text-align: center;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .heatmap-table td:first-child {
+      text-align: left;
+      font-weight: 500;
+      color: var(--color-dark);
+      padding-right: 16px;
+      white-space: nowrap;
+    }
+
+    .heatmap-cell {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-weight: 600;
+      font-size: 11px;
+      color: white;
+    }
+
+    /* ── Section intro ── */
+    .section-intro {
+      max-width: 680px;
+      margin-bottom: 40px;
+    }
+
+    .section-intro p {
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    /* ── Footer ── */
+    .report-footer {
+      background: var(--color-dark);
+      color: rgba(255,255,255,0.6);
+      padding: 48px 0;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .report-footer strong {
+      color: white;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Horizontal bar chart (CSS-based) ── */
+    .hbar-chart {
+      margin: 24px 0;
+    }
+
+    .hbar-row {
+      display: grid;
+      grid-template-columns: 200px 1fr 40px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .hbar-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-dark);
+      text-align: right;
+    }
+
+    .hbar-track {
+      height: 28px;
+      background: #f3f4f6;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .hbar-segment {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+      transition: width 0.5s ease;
+    }
+
+    .hbar-total {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-dark);
+    }
+
+    /* ── Legend ── */
+    .chart-legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      margin-bottom: 24px;
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .chart-legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* ── Phase pills ── */
+    .phase-breakdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 40px 0;
+    }
+
+    .phase-item {
+      text-align: center;
+      padding: 24px 16px;
+      border-radius: 10px;
+      background: var(--color-bg-warm);
+    }
+
+    .phase-number {
+      font-family: var(--font-heading);
+      font-size: 40px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .phase-pct {
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .phase-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-dark);
+      margin-top: 8px;
+    }
+
+    .phase-desc {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* ── Download Button ── */
+    .download-btn {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.95);
+      color: var(--color-dark);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.2s ease;
+    }
+
+    .download-btn:hover {
+      background: var(--color-dark);
+      color: white;
+      border-color: var(--color-dark);
+    }
+
+    .download-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .download-btn.generating {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* ── Print / PDF styles ── */
+    @media print {
+      .download-btn { display: none !important; }
+
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      body {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .page {
+        padding: 0 36px;
+      }
+
+      .cover {
+        min-height: 100vh;
+        page-break-after: always;
+        background: linear-gradient(135deg, #0e1c30 0%, #1b3d5e 50%, #2d5f8a 100%) !important;
+      }
+
+      .cover::before, .cover::after {
+        display: none;
+      }
+
+      .pull-quote {
+        page-break-inside: avoid;
+        background: #f7f8fb !important;
+      }
+
+      section {
+        padding: 48px 0;
+        page-break-before: auto;
+      }
+
+      section + section {
+        border-top: 1px solid #e2e5ea;
+      }
+
+      .exhibit {
+        page-break-inside: avoid;
+      }
+
+      .commentary {
+        page-break-inside: avoid;
+        background: #f7f8fb !important;
+      }
+
+      .stat-row {
+        page-break-inside: avoid;
+      }
+
+      .phase-breakdown {
+        page-break-inside: avoid;
+      }
+
+      .phase-item {
+        background: #f7f8fb !important;
+      }
+
+      .stat-card {
+        background: #f7f8fb !important;
+      }
+
+      .report-footer {
+        background: #0e1c30 !important;
+        page-break-before: auto;
+      }
+
+      .heatmap-cell {
+        -webkit-print-color-adjust: exact !important;
+      }
+
+      .hbar-segment {
+        -webkit-print-color-adjust: exact !important;
+      }
+
+      canvas {
+        max-width: 100% !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Download PDF Button -->
+  <button class="download-btn" onclick="generatePDF()" id="downloadBtn">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+    </svg>
+    Download PDF
+  </button>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- COVER PAGE -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="cover">
+    <div class="cover-grid" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="page">
+      <div class="cover-logo">Convolving</div>
+      <h1>The State of AI in Mid-Market Investment Management: Q1 2026</h1>
+      <p class="cover-subtitle">Adoption, automation, and the road to enterprise-scale AI across PE, asset management, and family offices.</p>
+      <p class="cover-meta">April 2026</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- PULL QUOTE 1 -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="pull-quote">
+    <div class="page">
+      <p>More than 80% of mid-market investment firms say they are now using AI in at least one function, yet fewer than one in five have moved beyond experimentation to scale it across their operations.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- KEY FINDINGS -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section class="key-findings">
+    <div class="page">
+      <h2>Key findings</h2>
+      <ol class="findings-list">
+        <li>
+          <div>
+            <span class="finding-title">Adoption is widespread, but depth remains shallow.</span>
+            83% of mid-market investment firms report using AI in at least one business function, up from 61% two years ago. However, only 17% have progressed beyond piloting.
+          </div>
+        </li>
+        <li>
+          <div>
+            <span class="finding-title">Deal sourcing and due diligence lead adoption.</span>
+            Investment teams most commonly deploy AI for deal flow screening (68%) and due diligence acceleration (57%), while portfolio monitoring and LP reporting lag behind.
+          </div>
+        </li>
+        <li>
+          <div>
+            <span class="finding-title">Agentic AI is on the radar but not yet in production.</span>
+            54% of respondents say they are experimenting with AI agents, but only 8% have deployed them in a live workflow. The most common use case is automated research synthesis.
+          </div>
+        </li>
+        <li>
+          <div>
+            <span class="finding-title">Firms investing in workflow redesign see 3x the impact.</span>
+            Organisations that redesigned processes around AI (rather than layering it on top) report three times higher satisfaction and measurable time savings of 30%+ on target tasks.
+          </div>
+        </li>
+        <li>
+          <div>
+            <span class="finding-title">Talent, not technology, is the primary bottleneck.</span>
+            62% cite internal skills gaps as the top barrier to scaling AI, ahead of data quality (48%) and compliance concerns (41%).
+          </div>
+        </li>
+        <li>
+          <div>
+            <span class="finding-title">Budget allocation is rising but fragmented.</span>
+            Average AI spend among mid-market firms increased 45% year-over-year, though most lack a centralised AI budget, with spending scattered across IT, operations, and individual deal teams.
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: ADOPTION LANDSCAPE -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="page">
+      <h2>AI adoption continues to broaden, but most firms remain in early stages</h2>
+      <div class="section-intro">
+        <p>Our survey of 420 investment professionals across private equity, asset management, and family office firms shows that AI usage has become the norm. The share of firms reporting regular AI use has climbed steadily since 2021, accelerating sharply after the arrival of generative AI tools in late 2022.</p>
+        <p>Yet at the enterprise level, the majority are still experimenting. Only 17% of respondents say their firm has moved into the scaling or fully integrated phase.</p>
+      </div>
+
+      <!-- Exhibit 1: Adoption over time -->
+      <div class="exhibit">
+        <div class="exhibit-label">Exhibit 1</div>
+        <div class="exhibit-title">AI adoption among mid-market investment firms has accelerated since 2022.</div>
+        <div class="exhibit-desc">Firms reporting regular AI use in at least one function, % of respondents</div>
+        <div class="chart-container" style="height: 320px;">
+          <canvas id="chart-adoption"></canvas>
+        </div>
+        <div class="exhibit-source">
+          Survey of 420 investment professionals at mid-market firms ($500M&ndash;$15B AUM), conducted January&ndash;March 2026.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+
+      <!-- Phase breakdown -->
+      <div class="phase-breakdown">
+        <div class="phase-item">
+          <div class="phase-number" style="color: #8ec3e8;">38%</div>
+          <div class="phase-name">Experimenting</div>
+          <div class="phase-desc">Early testing, individual users</div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-number" style="color: #5a9fd6;">28%</div>
+          <div class="phase-name">Piloting</div>
+          <div class="phase-desc">Structured pilots in 1&ndash;2 functions</div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-number" style="color: #2e6a9e;">13%</div>
+          <div class="phase-name">Scaling</div>
+          <div class="phase-desc">Expanding across teams</div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-number" style="color: #1b3d5e;">4%</div>
+          <div class="phase-name">Fully integrated</div>
+          <div class="phase-desc">AI embedded firm-wide</div>
+        </div>
+      </div>
+
+      <!-- Commentary -->
+      <div class="commentary">
+        <div class="commentary-header">
+          <div class="commentary-avatar">CW</div>
+          <div>
+            <div class="commentary-name">Cameron Weibel</div>
+            <div class="commentary-role">Co-founder, Convolving</div>
+          </div>
+        </div>
+        <p>The gap between "using AI" and "getting value from AI" is where most firms are stuck. We see the same pattern repeatedly: individual team members adopt ChatGPT or Copilot for ad-hoc tasks, the firm counts that as "AI adoption," but no workflow has actually changed. The firms that break through are the ones willing to redesign how work gets done, not just add a new tool to the existing process.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: AI BY INVESTMENT FUNCTION -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="page">
+      <h2>Deal sourcing and due diligence lead AI adoption by function</h2>
+      <div class="section-intro">
+        <p>When we look at where firms are deploying AI, deal sourcing and due diligence stand out as the most mature use cases. These functions benefit from large volumes of unstructured data (company profiles, news, filings) that AI can process at scale. Portfolio monitoring and LP reporting, despite being data-heavy, remain comparatively under-served.</p>
+      </div>
+
+      <!-- Exhibit 2: Adoption by function -->
+      <div class="exhibit">
+        <div class="exhibit-label">Exhibit 2</div>
+        <div class="exhibit-title">Deal sourcing and due diligence are the most common functions for AI deployment.</div>
+        <div class="exhibit-desc">AI usage by investment function, % of respondents reporting regular use</div>
+        <div class="chart-container" style="height: 360px;">
+          <canvas id="chart-by-function"></canvas>
+        </div>
+        <div class="exhibit-source">
+          Respondents who reported regular AI use in the respective functions. n = 420.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-number">68%</div>
+          <div class="stat-label">use AI for deal sourcing &amp; screening</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">57%</div>
+          <div class="stat-label">use AI for due diligence acceleration</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">23%</div>
+          <div class="stat-label">use AI for LP reporting &amp; communications</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- PULL QUOTE 2 -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="pull-quote">
+    <div class="page">
+      <p>Firms that redesigned their workflows around AI report three times higher satisfaction and measurable time savings of 30% or more on target tasks.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: AGENTIC AI -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="page">
+      <h2>Agentic AI is generating excitement, but production deployments remain rare</h2>
+      <div class="section-intro">
+        <p>AI agents that can plan, execute multi-step tasks, and interact with external tools represent the next frontier. More than half of respondents say their firm is at least exploring agentic capabilities. However, only 8% report having an agent in a live production workflow, reflecting the significant infrastructure and governance requirements involved.</p>
+      </div>
+
+      <!-- Exhibit 3: Agentic AI maturity -->
+      <div class="exhibit">
+        <div class="exhibit-label">Exhibit 3</div>
+        <div class="exhibit-title">Most firms are still in the exploration phase with agentic AI.</div>
+        <div class="exhibit-desc">Phase of agentic AI adoption, % of respondents</div>
+        <div class="chart-container" style="height: 300px;">
+          <canvas id="chart-agentic"></canvas>
+        </div>
+        <div class="exhibit-source">
+          Respondents were asked about their firm's most advanced agentic AI initiative. n = 420.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+
+      <!-- Heatmap: Agent use by function -->
+      <div class="exhibit" style="margin-top: 56px;">
+        <div class="exhibit-label">Exhibit 4</div>
+        <div class="exhibit-title">Automated research synthesis is the most common agentic use case, led by deal teams.</div>
+        <div class="exhibit-desc">Agentic AI experimentation by function and use case, % of respondents</div>
+
+        <table class="heatmap-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Research synthesis</th>
+              <th>Document processing</th>
+              <th>Market monitoring</th>
+              <th>Report generation</th>
+              <th>Data extraction</th>
+            </tr>
+          </thead>
+          <tbody id="heatmap-body">
+          </tbody>
+        </table>
+
+        <div class="exhibit-source">
+          Respondents who indicated experimentation or deployment of agentic AI in the given functions. n = 420.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: IMPACT -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="page">
+      <h2>Early adopters report meaningful operational impact</h2>
+      <div class="section-intro">
+        <p>While enterprise-wide financial impact remains limited, firms that have moved beyond experimentation report tangible benefits at the use-case level. Time savings in due diligence and deal screening are the most commonly cited, followed by improved consistency in reporting and reduced manual data entry.</p>
+      </div>
+
+      <!-- Exhibit 5: Impact by measure -->
+      <div class="exhibit">
+        <div class="exhibit-label">Exhibit 5</div>
+        <div class="exhibit-title">Time savings and consistency improvements are the most commonly reported benefits.</div>
+        <div class="exhibit-desc">Extent to which AI has affected operational measures over the past year, % of respondents</div>
+
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background: #1b3d5e;"></span> Significantly improved</span>
+          <span><span class="legend-dot" style="background: #2e6a9e;"></span> Somewhat improved</span>
+          <span><span class="legend-dot" style="background: #c2dff2;"></span> No change</span>
+          <span><span class="legend-dot" style="background: #e5e7eb;"></span> Don't know</span>
+        </div>
+
+        <div class="hbar-chart" id="impact-bars">
+        </div>
+
+        <div class="exhibit-source">
+          Asked only of respondents who said their firm regularly uses AI in at least one function. n = 349.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+
+      <!-- Commentary -->
+      <div class="commentary">
+        <div class="commentary-header">
+          <div class="commentary-avatar">SJ</div>
+          <div>
+            <div class="commentary-name">Spencer Johnson</div>
+            <div class="commentary-role">Co-founder, Convolving</div>
+          </div>
+        </div>
+        <p>The firms seeing real ROI are not the ones with the fanciest tools. They are the ones that started with a specific, measurable workflow bottleneck, built a focused solution, and iterated. A well-designed AI workflow for CIM summarisation can save an analyst 4 to 6 hours per deal. Multiply that across a deal team running 50 processes a year and the impact becomes substantial.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: BARRIERS & HIGH PERFORMERS -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="page">
+      <h2>Talent and process, not technology, are the primary barriers to scaling</h2>
+      <div class="section-intro">
+        <p>When asked about the biggest obstacles to scaling AI, respondents overwhelmingly point to people and process challenges rather than technology limitations. Internal skills gaps lead the list, followed by data quality concerns and regulatory uncertainty.</p>
+      </div>
+
+      <!-- Exhibit 6: Barriers -->
+      <div class="exhibit">
+        <div class="exhibit-label">Exhibit 6</div>
+        <div class="exhibit-title">Skills gaps and data quality are the top barriers to scaling AI in investment firms.</div>
+        <div class="exhibit-desc">Top barriers to scaling AI, % of respondents</div>
+        <div class="chart-container" style="height: 340px;">
+          <canvas id="chart-barriers"></canvas>
+        </div>
+        <div class="exhibit-source">
+          Respondents selected up to three barriers from a predefined list. n = 420.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+
+      <!-- Exhibit 7: High performers vs others -->
+      <div class="exhibit" style="margin-top: 56px;">
+        <div class="exhibit-label">Exhibit 7</div>
+        <div class="exhibit-title">High performers are 3.4x more likely to have redesigned workflows around AI.</div>
+        <div class="exhibit-desc">Practices reported by AI high performers vs. all other respondents, % of each group</div>
+        <div class="chart-container" style="height: 340px;">
+          <canvas id="chart-highperf"></canvas>
+        </div>
+        <div class="exhibit-source">
+          AI high performers defined as firms reporting measurable time savings &gt;30% in at least two functions. n (high performers) = 52, n (others) = 368.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- PULL QUOTE 3 -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="pull-quote">
+    <div class="page">
+      <p>62% of mid-market investment firms cite internal skills gaps as the single largest barrier to scaling AI across their organisation.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: BUDGET & SPEND -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="page">
+      <h2>AI budgets are growing but remain fragmented across teams</h2>
+      <div class="section-intro">
+        <p>Average AI-related spending among mid-market investment firms rose 45% year-over-year. Yet the majority of firms still lack a centralised AI budget. Spending is typically scattered across IT, deal teams, and operations, making it difficult to track ROI or coordinate initiatives firm-wide.</p>
+      </div>
+
+      <!-- Exhibit 8: Spend over time -->
+      <div class="exhibit">
+        <div class="exhibit-label">Exhibit 8</div>
+        <div class="exhibit-title">AI spend is rising, but most firms lack a centralised budget.</div>
+        <div class="exhibit-desc">Average annual AI-related spend (tools, infrastructure, talent), by firm size</div>
+        <div class="chart-container" style="height: 320px;">
+          <canvas id="chart-spend"></canvas>
+        </div>
+        <div class="exhibit-source">
+          Spend figures are self-reported estimates. Firm size categories: Small ($500M&ndash;$2B AUM), Mid ($2B&ndash;$7B), Large ($7B&ndash;$15B). n = 420.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-number">45%</div>
+          <div class="stat-label">year-over-year increase in average AI spend</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">71%</div>
+          <div class="stat-label">of firms lack a centralised AI budget</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">$1.2M</div>
+          <div class="stat-label">median annual AI spend across all firm sizes</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 7: LOOKING AHEAD -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="page">
+      <h2>Looking ahead: from experimentation to transformation</h2>
+      <div class="section-intro">
+        <p>Mid-market investment firms stand at an inflection point. The tools are available, the awareness is high, and early adopters are demonstrating real returns. But bridging the gap between pockets of experimentation and firm-wide transformation requires deliberate investment in three areas: workflow redesign, talent development, and governance frameworks.</p>
+      </div>
+
+      <!-- Exhibit 9: Planned investment areas -->
+      <div class="exhibit">
+        <div class="exhibit-label">Exhibit 9</div>
+        <div class="exhibit-title">Firms plan to increase investment in AI training and workflow redesign over the next 12 months.</div>
+        <div class="exhibit-desc">Areas where firms plan to increase AI investment, % of respondents</div>
+        <div class="chart-container" style="height: 340px;">
+          <canvas id="chart-planned"></canvas>
+        </div>
+        <div class="exhibit-source">
+          Respondents selected all areas where they plan to increase investment in the next 12 months. n = 420.
+        </div>
+        <div class="exhibit-attribution">Convolving</div>
+      </div>
+
+      <!-- Final commentary -->
+      <div class="commentary">
+        <div class="commentary-header">
+          <div class="commentary-avatar">CW</div>
+          <div>
+            <div class="commentary-name">Cameron Weibel</div>
+            <div class="commentary-role">Co-founder, Convolving</div>
+          </div>
+        </div>
+        <p>The next twelve months will separate the firms that treat AI as a strategic capability from those that treat it as a set of tools. We expect to see the first wave of mid-market firms achieve genuine workflow transformation, particularly in due diligence and portfolio monitoring. The key question is not whether to adopt AI, but how quickly firms can move from individual experimentation to coordinated, process-level integration.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- FOOTER -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <footer class="report-footer">
+    <div class="page">
+      <strong>Convolving</strong>
+      <p>The State of AI in Mid-Market Investment Management &middot; April 2026</p>
+      <p style="margin-top: 16px; font-size: 12px; color: rgba(255,255,255,0.4);">
+        This report is based on a survey of 420 investment professionals at firms with $500M&ndash;$15B in AUM across Europe, the Middle East, and Africa. Data collected January&ndash;March 2026. All data is illustrative and based on sample survey responses.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- CHARTS (Chart.js) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <script>
+    // Common config
+    Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#6b7280';
+    Chart.defaults.plugins.legend.display = false;
+
+    // Add spacing below chart legends
+    Chart.register({
+      id: 'legendMargin',
+      beforeInit(chart) {
+        const origFit = chart.legend.fit;
+        chart.legend.fit = function fit() {
+          origFit.bind(chart.legend)();
+          this.height += 16;
+        };
+      }
+    });
+
+    // Force minimum y-axis width for horizontal bar charts
+    const yAxisMinWidth = (axis) => { if (axis.width < 220) axis.width = 220; };
+
+    const BLUE_DARK = '#1b3d5e';
+    const BLUE_MED = '#2e6a9e';
+    const BLUE_LIGHT = '#5a9fd6';
+    const BLUE_PALE = '#8ec3e8';
+    const BLUE_FAINT = '#c2dff2';
+    const ORANGE = '#d4742c';
+    const GRAY = '#e5e7eb';
+
+    // ── Exhibit 1: Adoption over time ──
+    new Chart(document.getElementById('chart-adoption'), {
+      type: 'line',
+      data: {
+        labels: ['2021', '2022', '2023', '2024', '2025', '2026'],
+        datasets: [
+          {
+            label: 'Any AI use',
+            data: [31, 38, 52, 67, 78, 83],
+            borderColor: BLUE_DARK,
+            backgroundColor: BLUE_DARK,
+            borderWidth: 3,
+            pointRadius: 5,
+            pointBackgroundColor: BLUE_DARK,
+            tension: 0.3,
+          },
+          {
+            label: 'Gen AI use',
+            data: [null, null, 18, 41, 62, 71],
+            borderColor: BLUE_LIGHT,
+            backgroundColor: BLUE_LIGHT,
+            borderWidth: 3,
+            pointRadius: 5,
+            pointBackgroundColor: BLUE_LIGHT,
+            tension: 0.3,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'start',
+            labels: { usePointStyle: true, pointStyle: 'circle', padding: 20 }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { callback: v => v + '%' },
+            grid: { color: '#f3f4f6' }
+          },
+          x: {
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+    // ── Exhibit 2: Adoption by function ──
+    new Chart(document.getElementById('chart-by-function'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'Deal sourcing & screening',
+          'Due diligence',
+          'Market research',
+          'Risk assessment',
+          'Portfolio monitoring',
+          'Financial modelling',
+          'LP reporting',
+          'Compliance & regulatory'
+        ],
+        datasets: [{
+          data: [68, 57, 53, 42, 38, 35, 23, 19],
+          backgroundColor: [BLUE_DARK, BLUE_DARK, BLUE_MED, BLUE_MED, BLUE_LIGHT, BLUE_LIGHT, BLUE_PALE, BLUE_PALE],
+          borderRadius: 4,
+          barThickness: 28,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { left: 10 } },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 80,
+            ticks: { callback: v => v + '%' },
+            grid: { color: '#f3f4f6' }
+          },
+          y: {
+            grid: { display: false },
+            afterFit: yAxisMinWidth,
+            ticks: { font: { weight: 500 } }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: { label: ctx => ctx.raw + '% of respondents' }
+          }
+        }
+      }
+    });
+
+    // ── Exhibit 3: Agentic AI phase ──
+    new Chart(document.getElementById('chart-agentic'), {
+      type: 'bar',
+      data: {
+        labels: ['Not exploring', 'Awareness only', 'Exploring / researching', 'Experimenting', 'Piloting', 'Deployed in production'],
+        datasets: [{
+          data: [18, 28, 26, 14, 6, 8],
+          backgroundColor: [GRAY, BLUE_FAINT, BLUE_PALE, BLUE_LIGHT, BLUE_MED, BLUE_DARK],
+          borderRadius: 4,
+          barThickness: 36,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 35,
+            ticks: { callback: v => v + '%' },
+            grid: { color: '#f3f4f6' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 11 }, maxRotation: 0 }
+          }
+        }
+      }
+    });
+
+    // ── Exhibit 4: Heatmap ──
+    const heatmapData = [
+      { fn: 'Deal team', values: [24, 18, 21, 15, 20] },
+      { fn: 'Research / IC', values: [22, 14, 19, 12, 16] },
+      { fn: 'Portfolio ops', values: [11, 16, 8, 18, 14] },
+      { fn: 'Compliance', values: [6, 12, 5, 8, 11] },
+      { fn: 'Investor relations', values: [8, 7, 6, 14, 5] },
+      { fn: 'Operations / IT', values: [14, 19, 10, 11, 22] },
+    ];
+
+    function heatColor(val) {
+      if (val >= 20) return BLUE_DARK;
+      if (val >= 15) return BLUE_MED;
+      if (val >= 10) return BLUE_LIGHT;
+      if (val >= 5) return BLUE_PALE;
+      return '#d6eaf5';
+    }
+
+    const heatmapBody = document.getElementById('heatmap-body');
+    heatmapData.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${row.fn}</td>` +
+        row.values.map(v => `<td><span class="heatmap-cell" style="background:${heatColor(v)}">${v}</span></td>`).join('');
+      heatmapBody.appendChild(tr);
+    });
+
+    // ── Exhibit 5: Impact horizontal bars ──
+    const impactData = [
+      { label: 'Time savings in DD', sig: 28, some: 34, none: 24, dk: 14 },
+      { label: 'Deal screening speed', sig: 25, some: 31, none: 28, dk: 16 },
+      { label: 'Reporting consistency', sig: 19, some: 33, none: 30, dk: 18 },
+      { label: 'Data entry reduction', sig: 22, some: 28, none: 32, dk: 18 },
+      { label: 'Research quality', sig: 16, some: 30, none: 35, dk: 19 },
+      { label: 'Decision speed', sig: 12, some: 25, none: 40, dk: 23 },
+      { label: 'Cost reduction', sig: 10, some: 22, none: 42, dk: 26 },
+    ];
+
+    const impactContainer = document.getElementById('impact-bars');
+    impactData.forEach(d => {
+      const total = d.sig + d.some;
+      const row = document.createElement('div');
+      row.className = 'hbar-row';
+      row.innerHTML = `
+        <div class="hbar-label">${d.label}</div>
+        <div class="hbar-track">
+          <div class="hbar-segment" style="width:${d.sig}%;background:${BLUE_DARK}">${d.sig > 8 ? d.sig : ''}</div>
+          <div class="hbar-segment" style="width:${d.some}%;background:${BLUE_MED}">${d.some > 8 ? d.some : ''}</div>
+          <div class="hbar-segment" style="width:${d.none}%;background:${BLUE_FAINT};color:#6b7280">${d.none > 8 ? d.none : ''}</div>
+          <div class="hbar-segment" style="width:${d.dk}%;background:${GRAY};color:#9ca3af">${d.dk > 8 ? d.dk : ''}</div>
+        </div>
+        <div class="hbar-total">${total}%</div>
+      `;
+      impactContainer.appendChild(row);
+    });
+
+    // ── Exhibit 6: Barriers ──
+    new Chart(document.getElementById('chart-barriers'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'Internal skills gaps',
+          'Data quality / accessibility',
+          'Regulatory uncertainty',
+          'Lack of clear ROI metrics',
+          'System integration',
+          'Leadership buy-in',
+          'Vendor/tool fragmentation',
+          'Security concerns'
+        ],
+        datasets: [{
+          data: [62, 48, 41, 39, 36, 28, 24, 21],
+          backgroundColor: BLUE_DARK,
+          borderRadius: 4,
+          barThickness: 24,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { left: 10 } },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 70,
+            ticks: { callback: v => v + '%' },
+            grid: { color: '#f3f4f6' }
+          },
+          y: {
+            grid: { display: false },
+            afterFit: yAxisMinWidth,
+            ticks: { font: { size: 11, weight: 500 } }
+          }
+        }
+      }
+    });
+
+    // ── Exhibit 7: High performers vs others ──
+    new Chart(document.getElementById('chart-highperf'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'Redesigned workflows',
+          'Centralised AI budget',
+          'Dedicated AI team/role',
+          'Formal AI governance',
+          'Regular AI training',
+          'Cross-team AI sharing'
+        ],
+        datasets: [
+          {
+            label: 'AI high performers',
+            data: [81, 65, 71, 58, 73, 62],
+            backgroundColor: BLUE_DARK,
+            borderRadius: 4,
+            barThickness: 20,
+          },
+          {
+            label: 'All others',
+            data: [24, 19, 22, 16, 31, 18],
+            backgroundColor: BLUE_PALE,
+            borderRadius: 4,
+            barThickness: 20,
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { left: 10 } },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'start',
+            labels: { usePointStyle: true, pointStyle: 'rect', padding: 20 }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { callback: v => v + '%' },
+            grid: { color: '#f3f4f6' }
+          },
+          y: {
+            grid: { display: false },
+            afterFit: yAxisMinWidth,
+            ticks: { font: { size: 11, weight: 500 } }
+          }
+        }
+      }
+    });
+
+    // ── Exhibit 8: AI Spend by firm size ──
+    new Chart(document.getElementById('chart-spend'), {
+      type: 'bar',
+      data: {
+        labels: ['Small\n($500M–$2B)', 'Mid\n($2B–$7B)', 'Large\n($7B–$15B)'],
+        datasets: [
+          {
+            label: '2024',
+            data: [420, 890, 2100],
+            backgroundColor: BLUE_PALE,
+            borderRadius: 4,
+            barThickness: 36,
+          },
+          {
+            label: '2025',
+            data: [580, 1200, 2800],
+            backgroundColor: BLUE_LIGHT,
+            borderRadius: 4,
+            barThickness: 36,
+          },
+          {
+            label: '2026 (projected)',
+            data: [810, 1700, 4100],
+            backgroundColor: BLUE_DARK,
+            borderRadius: 4,
+            barThickness: 36,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'start',
+            labels: { usePointStyle: true, pointStyle: 'rect', padding: 20 }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(1) + 'M' : v + 'K') },
+            grid: { color: '#f3f4f6' }
+          },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    // ── Exhibit 9: Planned investment areas ──
+    new Chart(document.getElementById('chart-planned'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'AI training & upskilling',
+          'Workflow redesign',
+          'Data infrastructure',
+          'AI tooling & platforms',
+          'Agentic AI capabilities',
+          'Governance & compliance',
+          'Dedicated AI headcount',
+          'External partnerships'
+        ],
+        datasets: [{
+          data: [67, 58, 54, 51, 44, 41, 33, 29],
+          backgroundColor: [BLUE_DARK, BLUE_DARK, BLUE_MED, BLUE_MED, BLUE_LIGHT, BLUE_LIGHT, BLUE_PALE, BLUE_PALE],
+          borderRadius: 4,
+          barThickness: 24,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { left: 10 } },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 80,
+            ticks: { callback: v => v + '%' },
+            grid: { color: '#f3f4f6' }
+          },
+          y: {
+            grid: { display: false },
+            afterFit: yAxisMinWidth,
+            ticks: { font: { size: 11, weight: 500 } }
+          }
+        }
+      }
+    });
+  </script>
+
+  <!-- PDF Generation via native print -->
+  <script>
+    function generatePDF() {
+      window.print();
+    }
+  </script>
+
+</body>
+</html>
